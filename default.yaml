@@ -1,0 +1,6 @@
+executable:
+    otf2_print: "/Users/saptarshibhowmik/Applications/otf2/bin/otf2-print"
+location:
+    path: "/Users/saptarshibhowmik/traces"
+output:
+    path: "/Users/saptarshibhowmik/otf2Parser"

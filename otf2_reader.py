@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
+import pandas as pd
 from otf2Parser.otf2_2_ascii import All_traces_ascii
 from pathlib import Path
+
  
 
 
@@ -167,6 +169,12 @@ def event_time(tracepath):
             'Testany_time': Testany_time}
 
 def read_otf():
+    traceName = []
+    ticksPerSecond = []
+    tracerLoopTime = []
+    communicationTime = []
+    computationTime = []
+    percentageOfCommunication = []
     for num, i in enumerate(All_traces_ascii[0]):
         print('Trace Name : {}'.format(str(i[0])))
         Tracer_loop_time_total = 0
@@ -196,10 +204,22 @@ def read_otf():
             Barrier_time_total += Time_event_dict.get('Barrier_time')
             Testany_time_total += Time_event_dict.get('Testany_time')
         Ticks_per_second = int(All_traces_ascii[1][num][0][0])
-        print(Ticks_per_second)
+#        print('Ticks per second : {}'.format(Ticks_per_second))
         comm_time = Isend_time_total + Irecv_time_total + Waitall_time_totat + Alltoall_time_total + Waitany_time_total +Allreduce_time_total + Reduce_time_total + Barrier_time_total + Testany_time_total
-        print('Tracer loop time : {}'.format( Tracer_loop_time_total / Ticks_per_second ))
-        print('Communication time : {}'.format( comm_time / Ticks_per_second ))
-        print('Computation time : {}'.format( (Tracer_loop_time_total - comm_time) / Ticks_per_second ))
-        print('Percentage of computation : {}'.format((Tracer_loop_time_total - comm_time)/Tracer_loop_time_total *   100))
+#        print('Tracer loop time : {}'.format( Tracer_loop_time_total / Ticks_per_second ))
+#        print('Communication time : {}'.format( comm_time / Ticks_per_second ))
+#        print('Computation time : {}'.format( (Tracer_loop_time_total - comm_time) / Ticks_per_second ))
+#        print('Percentage of computation : {}'.format((Tracer_loop_time_total - comm_time)/Tracer_loop_time_total * 100))
+        traceName.append(str(i[0]))
+        ticksPerSecond.append(int(All_traces_ascii[1][num][0][0]))
+        tracerLoopTime.append(Tracer_loop_time_total / Ticks_per_second)
+        communicationTime.append(comm_time / Ticks_per_second)
+        computationTime.append((Tracer_loop_time_total - comm_time) / Ticks_per_second)
+        percentageOfCommunication.append((Tracer_loop_time_total - comm_time)/Tracer_loop_time_total * 100)
+    df = pd.DataFrame({
+    'Trace Name': traceName,
+    'Ticks per second': ticksPerSecond
+    })
+    print(df)
+
 read_otf()
